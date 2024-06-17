@@ -1,6 +1,11 @@
 'use client';
 
 import { SidebarItems } from '@/types';
+import { Menu, X } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { SidebarButtonSheet as SidebarButton } from './sidebar-button';
+import { Button } from './ui/button';
 import {
   Sheet,
   SheetClose,
@@ -8,14 +13,6 @@ import {
   SheetHeader,
   SheetTrigger,
 } from './ui/sheet';
-import { Button } from './ui/button';
-import { LogOut, Menu, MoreHorizontal, Settings, X } from 'lucide-react';
-import Link from 'next/link';
-import { SidebarButtonSheet as SidebarButton } from './sidebar-button';
-import { usePathname } from 'next/navigation';
-import { Separator } from './ui/separator';
-import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 interface SidebarMobileProps {
   sidebarItems: SidebarItems;
@@ -27,14 +24,14 @@ export function SidebarMobile(props: SidebarMobileProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button size='icon' variant='ghost' className='fixed top-3 left-3'>
+        <Button size='icon' variant='ghost' className='fixed top-3 left-3 z-20'>
           <Menu size={20} />
         </Button>
       </SheetTrigger>
       <SheetContent side='left' className='px-3 py-4' hideClose>
         <SheetHeader className='flex flex-row justify-between items-center space-y-0'>
           <span className='text-lg font-semibold text-foreground mx-3'>
-            Twitter
+            LABIRA RAG
           </span>
           <SheetClose asChild>
             <Button className='h-7 w-7 p-0' variant='ghost'>
@@ -57,7 +54,7 @@ export function SidebarMobile(props: SidebarMobileProps) {
             ))}
             {props.sidebarItems.extras}
           </div>
-          <div className='absolute w-full bottom-4 px-1 left-0'>
+          {/* <div className='absolute w-full bottom-4 px-1 left-0'>
             <Separator className='absolute -top-3 left-0 w-full' />
             <Drawer>
               <DrawerTrigger asChild>
@@ -87,7 +84,7 @@ export function SidebarMobile(props: SidebarMobileProps) {
                 </div>
               </DrawerContent>
             </Drawer>
-          </div>
+          </div> */}
         </div>
       </SheetContent>
     </Sheet>
