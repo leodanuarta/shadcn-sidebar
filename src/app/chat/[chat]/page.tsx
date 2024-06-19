@@ -1,11 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronsDown, LucideArrowLeft, SendHorizontal } from 'lucide-react';
-// import { useRouter } from 'next/router';
-import { permanentRedirect } from 'next/navigation';
+import { ChevronsDown, Clock, LucideArrowLeft, SendHorizontal } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 interface Message {
@@ -20,7 +18,8 @@ export default function ItemPage({ params }: { params: { chat: string } }) {
   const [showHeader, setShowHeader] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLDivElement | null>(null);
-  // const router = useRouter();
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const router = useRouter();
   // use effect untuk otomatis kebawah jika ada chat baru
   useEffect(() => {
     if (messagesEndRef.current){
@@ -43,6 +42,21 @@ export default function ItemPage({ params }: { params: { chat: string } }) {
   }, []);
 
   const handleSend = () => {
+    switch (params.chat) {
+      case 'bahasa':
+        console.log('Valid chat: chat1', params.chat), params.chat;
+        break;
+      case 'chat2':
+        console.log('Valid chat: chat2'), params.chat;
+        break;
+      case 'chat3':
+        console.log('Valid chat: chat3'), params.chat;
+        break;
+      default:
+        console.log('Invalid chat parameter'), params.chat;
+        return;
+    }
+
     console.log('Pesan dikirim:', question);
 
     if (question.trim()){
@@ -55,19 +69,36 @@ export default function ItemPage({ params }: { params: { chat: string } }) {
         setMessages(prevMessages => [...prevMessages, {text: "ini adalah response dari API", fromUser: false}]);
         setIsLoading(false);
       }, 5000);
+
+      // Rese textarea height
+      if (inputRef.current){
+        inputRef.current.style.height = 'auto';
+        inputRef.current.rows = 1;
+      }
     }
   };
 
   const handleBack = () => {
-    console.log("back is pressed");
-    permanentRedirect("/")
-    // router.push("/");
+    router.push("/");
   };
 
   const handleGoToBottom = () => {
     if(messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
     }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
+    const target = event.target as HTMLTextAreaElement;
+    target.style.height = 'auto'; // Reset height
+    target.style.height = `${target.scrollHeight}px`; // Set height to scrollHeight
   };
 
   return (
@@ -109,25 +140,39 @@ export default function ItemPage({ params }: { params: { chat: string } }) {
         </div>
       </div>
 
-      {/* Go to bottom btn */}
-      <div className="fixed bottom-16 right-4 mb-6">
-        <Button onClick={handleGoToBottom}>
-          <ChevronsDown />
-        </Button>
-
-      </div>
 
       {/* Input teks dan tombol di bagian bawah */}
-      <div className="bg-slate-950 p-4 flex items-center border-t border-gray-200 sticky bottom-0">
-        <Input
-          type="text"
+      {/* Go to bottom btn */}
+      <div className="sticky bottom-0 right-4 mb-6">
+        
+      </div>
+
+      <div className="bg-slate-950 ps-4 pt-4 py-4 flex items-center border-t border-gray-200 sticky bottom-0">
+        <Button 
+          onClick={handleGoToBottom}
+          className="absolute right-2 mb-36 rounded-full"
+          size="sm"
+        >
+          <ChevronsDown />
+        </Button>
+        
+        <textarea
+          ref={inputRef}
           placeholder="Tulis pesan..."
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          className="flex-grow px-3 py-2 border border-gray-300 rounded-md"
+          onKeyDown={handleKeyDown} // Tambahkan event handler onKeyDown
+          onInput={handleInput} // Tambahkan event handler onInput
+          className="flex-grow px-3 py-2 ps-4 border border-gray-300 rounded-sm resize-none bg-slate-950 overflow-y-auto"
+          rows={1}
+          style={{maxHeight:'150px'}}
+          disabled={isLoading}
         />
-        <Button onClick={handleSend} className="ml-2">
+        <Button onClick={handleSend} disabled={isLoading} className="ml-4" style={{display: isLoading?"none":"block"}}>
           <SendHorizontal />
+        </Button>
+        <Button disabled={isLoading} className="ml-4" style={{display: isLoading?"block":"none"}}>
+          <Clock />
         </Button>
       </div>
     </div>
