@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GetRAGResponse } from "@/service/api";
 import { ChevronsDown, Clock, LucideArrowLeft, SendHorizontal } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -16,6 +17,7 @@ export default function ItemPage({ params }: { params: { chat: string } }) {
   const [messages, setMessages] = useState<Message[]>([]); // state untuk menyimpan pesan
   const [isLoading, setIsLoading] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
+  const [namespace, setNamespace] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -41,34 +43,45 @@ export default function ItemPage({ params }: { params: { chat: string } }) {
     };
   }, []);
 
-  const handleSend = () => {
-    switch (params.chat) {
-      case 'bahasa':
-        console.log('Valid chat: chat1', params.chat), params.chat;
-        break;
-      case 'chat2':
-        console.log('Valid chat: chat2'), params.chat;
-        break;
-      case 'chat3':
-        console.log('Valid chat: chat3'), params.chat;
-        break;
-      default:
-        console.log('Invalid chat parameter'), params.chat;
-        return;
-    }
-
-    console.log('Pesan dikirim:', question);
+  const handleSend = async () => {
+    let namespace = ""
+    
 
     if (question.trim()){
       setMessages([...messages, {text: question, fromUser: true}]);
       setQuestion('');
       setIsLoading(true);
 
+      switch (params.chat) {
+        case 'bahasa':
+          console.log('Valid chat: chat1', params.chat), params.chat;
+          break;
+        case 'pjok':
+          console.log('Valid chat: chat2'), params.chat;
+          // setNamespace("PJOK")
+          // const response = await GetRAGResponse(namespace, question)
+          namespace = "pjok";
+          const response = await GetRAGResponse(namespace, question)
+          console.log("ini response dari API", response)
+          const hasil = response
+          setMessages(prevMessages => [...prevMessages, {text: response.toString(), fromUser: false}]);
+          break;
+        case 'chat3':
+          console.log('Valid chat: chat3'), params.chat;
+          break;
+        default:
+          console.log('Invalid chat parameter'), params.chat;
+          return;
+      }
+      setIsLoading(false);
+  
+      console.log('Pesan dikirim:', question);
+
       // simulasi response API 
-      setTimeout(() =>{
-        setMessages(prevMessages => [...prevMessages, {text: "ini adalah response dari API", fromUser: false}]);
-        setIsLoading(false);
-      }, 5000);
+      // setTimeout(() =>{
+      //   setMessages(prevMessages => [...prevMessages, {text: "ini adalah response dari API", fromUser: false}]);
+      //   setIsLoading(false);
+      // }, 5000);
 
       // Rese textarea height
       if (inputRef.current){
