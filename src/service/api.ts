@@ -1,6 +1,7 @@
 "use server"
 
-export async function GetRAGResponse(namespace : string, question: string): Promise<string> {
+
+export async function GetRAGResponse(namespace : string, question: string) {
         const response = await fetch(process.env.LABIRA_RAG_API + "/tanyalabira", {
                 method: "POST",
                 headers: {
@@ -14,8 +15,7 @@ export async function GetRAGResponse(namespace : string, question: string): Prom
                         }
                 )
         })
-
-        const result = await response.text
-        return result.toString();
+        const data = await response.json();
+        return data;
 
 }

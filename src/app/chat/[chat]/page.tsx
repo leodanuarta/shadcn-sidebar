@@ -61,19 +61,26 @@ export default function ItemPage({ params }: { params: { chat: string } }) {
           // setNamespace("PJOK")
           // const response = await GetRAGResponse(namespace, question)
           namespace = "pjok";
-          const response = await GetRAGResponse(namespace, question)
-          console.log("ini response dari API", response)
-          const hasil = response
-          setMessages(prevMessages => [...prevMessages, {text: response.toString(), fromUser: false}]);
           break;
         case 'chat3':
           console.log('Valid chat: chat3'), params.chat;
           break;
         default:
           console.log('Invalid chat parameter'), params.chat;
+          setIsLoading(false);
           return;
       }
-      setIsLoading(false);
+
+      try{
+        const response = await GetRAGResponse(namespace, question)
+        console.log("ini response dari API", response.text)
+        setMessages(prevMessages => [...prevMessages, {text: response.text, fromUser: false}]);
+      }catch(error){
+        console.error('Error fetching response:', error);
+        setMessages(prevMessages => [...prevMessages, { text: 'Maaf, Saat ini kami sedang tidak tersedia', fromUser: false }]);
+      }finally{
+        setIsLoading(false);
+      }
   
       console.log('Pesan dikirim:', question);
 
