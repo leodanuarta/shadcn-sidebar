@@ -12,6 +12,7 @@ export async function GetRAGResponse(namespace : string, question: string) {
                                 "namespace" : namespace,
                                 "question" : question,
                                 "index_name": process.env.LABIRA_RAG_INDEX_NAME,
+                                "session_id" : "salkslajwijlalakwjoijaknd" // ini nanti buat auth sessionnya
                         }
                 )
         })
