@@ -1,8 +1,10 @@
 "use server"
 
+import { log } from "console";
+
 
 export async function GetRAGResponse(namespace : string, question: string) {
-        const response = await fetch(process.env.LABIRA_RAG_API + "/tanyalabira", {
+        const response = await fetch(process.env.LABIRA_RAG_API + "/v1/tanyalabira", {
                 method: "POST",
                 headers: {
                         "content-type": "application/json"
@@ -19,4 +21,22 @@ export async function GetRAGResponse(namespace : string, question: string) {
         const data = await response.json();
         return data;
 
+}
+
+
+export async function GetUserSession(){
+        const response = await fetch(process.env.LABIRA_RAG_API + "/v1/getsession", {
+                method: "GET",
+                headers:{
+                        "content-type": "application/json",
+                },
+        })
+        const data = await response.json();
+        log()
+        // return data;
+        return {
+                props: {
+                        userSession: data.id || '',
+                },
+        }
 }

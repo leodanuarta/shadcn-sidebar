@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GetRAGResponse } from "@/service/api";
+import { GetRAGResponse, GetUserSession } from "@/service/api";
 import { ChevronsDown, Clock, LucideArrowLeft, SendHorizontal } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -17,11 +17,58 @@ export default function ItemPage({ params }: { params: { chat: string } }) {
   const [messages, setMessages] = useState<Message[]>([]); // state untuk menyimpan pesan
   const [isLoading, setIsLoading] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
-  const [namespace, setNamespace] = useState("");
+  const [userSession, setuserSession] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const router = useRouter();
+  
+
+
+  // useEffect(() => {
+  //   const userID = async () => {
+  //     try{
+  //       const resp = await GetUserSession()
+  //       setuserSession(resp.id)
+  //       console.log("user id : ", userSession)
+  //       console.log("response :", resp)
+  //     }catch(error){
+  //       console.error('Error fetching response:', error);
+  //       setIsLoading(true)
+  //     }
+
+  //   }
+
+  //   userID()
+  // }, [])
+
+  useEffect(() => {
+    const fetchUserSession = async () => {
+      try {
+        const resp = await GetUserSession();
+        // setuserSession(resp);
+        const text = await resp
+        console.log('Raw response:', text);
+        // const data = JSON.parse(text);
+      } catch (error) {
+        console.error('Error fetching response:', error);
+        setIsLoading(true);
+      }
+    };
+
+    fetchUserSession();
+  }, []);
+
+
+  console.log(userSession)
+
+  // // Use effect to log userSession when it changes
+  // useEffect(() => {
+  //   if (userSession) {
+  //     console.log("user id : ", userSession);
+  //   }
+  // }, [userSession]);
+
   // use effect untuk otomatis kebawah jika ada chat baru
   useEffect(() => {
     if (messagesEndRef.current){
